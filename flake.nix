@@ -85,13 +85,9 @@
           doCheck = true;
           checkPhase = ''
             runHook preCheck
-            if ! bash tests/run.sh build/driver build/reference.js build/generate.js "$PWD/home" \
+            bash tests/run.sh build/driver build/reference.js build/generate.js "$PWD/home" \
               ${open-unicode-converter}/src/app/core/converters/singlish/singlish-converter.spec.ts \
-              >report.txt; then
-              cat report.txt
-              exit 1
-            fi
-            cat report.txt
+              | tee report.txt
             runHook postCheck
           '';
 
