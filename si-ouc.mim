@@ -15,9 +15,9 @@
 ;; the cursor: `@-N' reads the preedit first and then the application's
 ;; surrounding text, where the application provides it.
 ;;
-;; Each key has one macro.  Its `cond' lists that key's rules in
-;; config.json order, the first matching rule wins, and the last branch
-;; inserts the key's default text.
+;; Each key config.json maps has one macro.  Its `cond' lists that key's
+;; rules in config.json order, the first matching rule wins, and the last
+;; branch inserts the key's default text.
 
 (input-method si ouc)
 
