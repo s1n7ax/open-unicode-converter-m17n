@@ -1,0 +1,357 @@
+;; si-ouc.mim -- Sinhala Singlish input method with Open Unicode Converter rules
+;;
+;; Copyright (c) 2026 s1n7ax
+;; SPDX-License-Identifier: MIT
+;; https://github.com/s1n7ax/open-unicode-converter-m17n
+;;
+;; Every key and rule is ported from Open Unicode Converter's Singlish
+;; keymap, src/app/core/converters/singlish/config.json at commit 4b9bd62
+;; of https://github.com/s1n7ax/open-unicode-converter, and types the same
+;; text for the same keystrokes.
+;;
+;; The word being typed stays in the preedit until a key this map does not
+;; bind (Space, Return, Tab, arrows, modifier chords) commits it and passes
+;; that key on to the application.  A rule matches the text right before
+;; the cursor: `@-N' reads the preedit first and then the application's
+;; surrounding text, where the application provides it.
+;;
+;; Each key has one macro.  Its `cond' lists that key's rules in
+;; config.json order, the first matching rule wins, and the last branch
+;; inserts the key's default text.
+
+(input-method si ouc)
+
+(description "Sinhala Singlish transliteration with the rules of Open Unicode Converter (https://www.sinhalaunicode.org/).")
+
+(title "සිං")
+
+(macro
+
+ ;; Sets `after-consonant' to 1 when the character before the cursor is
+ ;; one of the 40 letters of config.json's `consonant' variable, else 0.
+ (check-consonant
+  (set after-consonant
+       (| (= @-1 ?ක) (= @-1 ?ඛ) (= @-1 ?ග) (= @-1 ?ඝ) (= @-1 ?ඞ)
+          (= @-1 ?ඟ) (= @-1 ?ච) (= @-1 ?ඡ) (= @-1 ?ජ) (= @-1 ?ඣ)
+          (= @-1 ?ඤ) (= @-1 ?ඦ) (= @-1 ?ට) (= @-1 ?ඨ) (= @-1 ?ඩ)
+          (= @-1 ?ඪ) (= @-1 ?ණ) (= @-1 ?ඬ) (= @-1 ?ත) (= @-1 ?ථ)
+          (= @-1 ?ද) (= @-1 ?ධ) (= @-1 ?න) (= @-1 ?ඳ) (= @-1 ?ප)
+          (= @-1 ?ඵ) (= @-1 ?බ) (= @-1 ?භ) (= @-1 ?ම) (= @-1 ?ඹ)
+          (= @-1 ?ය) (= @-1 ?ර) (= @-1 ?ල) (= @-1 ?ව) (= @-1 ?ශ)
+          (= @-1 ?ෂ) (= @-1 ?ස) (= @-1 ?හ) (= @-1 ?ළ) (= @-1 ?ෆ))))
+
+ ;; Vowels
+
+ (key-a
+  (check-consonant)
+  (cond
+   ((= @-1 ?අ) (delete @-1) (insert "ආ"))
+   ((= @-1 ?ඇ) (delete @-1) (insert "ඈ"))
+   ((= @-1 ?එ) (delete @-1) (insert "ඒ"))
+   ((= @-1 ?්) (delete @-1))
+   ((= after-consonant 1) (insert "ා"))
+   ((= @-1 ?ැ) (delete @-1) (insert "ෑ"))
+   ((= @-1 ?ෙ) (delete @-1) (insert "ේ"))
+   ((= @-1 ?ො) (delete @-1) (insert "ෝ"))
+   (1 (insert "අ"))))
+
+ (key-A
+  (cond
+   ((= @-1 ?්) (delete @-1) (insert "ැ"))
+   (1 (insert "ඇ"))))
+
+ (key-e
+  (check-consonant)
+  (cond
+   ((= @-1 ?අ) (delete @-1) (insert "ඈ"))
+   ((= @-1 ?ඉ) (delete @-1) (insert "ඊ"))
+   ((= @-1 ?ඔ) (delete @-1) (insert "ඕ"))
+   ((= @-1 ?්) (delete @-1) (insert "ෙ"))
+   ((= @-1 ?ැ) (delete @-1) (insert "ෑ"))
+   ((= after-consonant 1) (insert "ෑ"))
+   ((= @-1 ?ො) (delete @-1) (insert "ෝ"))
+   ((= @-1 ?ි) (delete @-1) (insert "ී"))
+   ((= @-1 ?ෙ) (delete @-1) (insert "ී"))
+   (1 (insert "එ"))))
+
+ (key-i
+  (cond
+   ((= @-1 ?ඉ) (delete @-1) (insert "ඊ"))
+   ((= @-1 ?්) (delete @-1) (insert "ි"))
+   ((= @-1 ?ි) (delete @-1) (insert "ී"))
+   (1 (insert "ඉ"))))
+
+ (key-I
+  (cond
+   ((= @-1 ?්) (delete @-1) (insert "ෛ"))
+   (1 (insert "I"))))
+
+ (key-u
+  (check-consonant)
+  (cond
+   ((= @-1 ?උ) (delete @-1) (insert "ඌ"))
+   ((= @-1 ?අ) (delete @-1) (insert "ඖ"))
+   ((& (= @-4 ?්) (= @-3 0x200D) (= @-2 ?ර) (= @-1 ?්))
+    (delete @-4) (insert "ෘ"))
+   ((= @-1 ?්) (delete @-1) (insert "ු"))
+   ((= @-1 ?ු) (delete @-1) (insert "ූ"))
+   ((= @-1 ?ෘ) (delete @-1) (insert "ෲ"))
+   ((= after-consonant 1) (insert "ෞ"))
+   (1 (insert "උ"))))
+
+ (key-U
+  (cond
+   ((= @-1 ?්) (delete @-1) (insert "ෞ"))
+   (1 (insert "U"))))
+
+ (key-o
+  (cond
+   ((= @-1 ?්) (delete @-1) (insert "ො"))
+   (1 (insert "ඔ"))))
+
+ ;; Consonants
+
+ (key-k
+  (insert "ක්"))
+
+ (key-K
+  (insert "ඛ්"))
+
+ (key-h
+  (cond
+   ((& (= @-2 ?ක) (= @-1 ?්)) (delete @-2) (insert "ඛ්"))
+   ((& (= @-2 ?ග) (= @-1 ?්)) (delete @-2) (insert "ඝ්"))
+   ((= @-1 ?c) (delete @-1) (insert "ච්"))
+   ((= @-1 ?C) (delete @-1) (insert "ඡ්"))
+   ((& (= @-2 ?ට) (= @-1 ?්)) (delete @-2) (insert "ත්"))
+   ((& (= @-2 ?ඨ) (= @-1 ?්)) (delete @-2) (insert "ථ්"))
+   ((& (= @-2 ?ඩ) (= @-1 ?්)) (delete @-2) (insert "ද්"))
+   ((& (= @-2 ?ඪ) (= @-1 ?්)) (delete @-2) (insert "ධ්"))
+   ((& (= @-2 ?ඬ) (= @-1 ?්)) (delete @-2) (insert "ඳ්"))
+   ((& (= @-2 ?ප) (= @-1 ?්)) (delete @-2) (insert "ඵ්"))
+   ((& (= @-2 ?බ) (= @-1 ?්)) (delete @-2) (insert "භ්"))
+   ((& (= @-2 ?ස) (= @-1 ?්)) (delete @-2) (insert "ශ්"))
+   ((= @-1 ?S) (delete @-1) (insert "ෂ්"))
+   (1 (insert "හ්"))))
+
+ (key-g
+  (cond
+   ((& (= @-4 ?න) (= @-3 ?්) (= @-2 ?න) (= @-1 ?්))
+    (delete @-4) (insert "ඟ්"))
+   (1 (insert "ග්"))))
+
+ (key-G
+  (insert "ඝ්"))
+
+ (key-j
+  (insert "ජ්"))
+
+ (key-J
+  (insert "ඣ්"))
+
+ (key-N
+  (cond
+   ((& (= @-2 ?ඛ) (= @-1 ?්)) (delete @-2) (insert "ඤ්"))
+   (1 (insert "ණ්"))))
+
+ (key-t
+  (insert "ට්"))
+
+ (key-T
+  (insert "ඨ්"))
+
+ (key-d
+  (cond
+   ((& (= @-4 ?න) (= @-3 ?්) (= @-2 ?න) (= @-1 ?්))
+    (delete @-4) (insert "ඬ්"))
+   (1 (insert "ඩ්"))))
+
+ (key-D
+  (insert "ඪ්"))
+
+ (key-n
+  (insert "න්"))
+
+ (key-p
+  (insert "ප්"))
+
+ (key-P
+  (insert "ඵ්"))
+
+ (key-b
+  (insert "බ්"))
+
+ (key-B
+  (insert "ඹ්"))
+
+ (key-m
+  (insert "ම්"))
+
+ (key-y
+  (insert "ය්"))
+
+ (key-Y
+  (cond
+   ((= @-1 ?්) (delete @-1) (insert "්\x200Dය්"))
+   (1 (insert "Y"))))
+
+ (key-r
+  (cond
+   ((= @-1 ?්) (delete @-1) (insert "්\x200Dර්"))
+   (1 (insert "ර්"))))
+
+ (key-l
+  (insert "ල්"))
+
+ (key-w
+  (insert "ව්"))
+
+ (key-v
+  (insert "ව්"))
+
+ (key-L
+  (insert "ළ්"))
+
+ (key-s
+  (insert "ස්"))
+
+ (key-f
+  (insert "ෆ්"))
+
+ ;; Anusvara and visarga.  The empty-match rule applies whenever the
+ ;; current word is not empty, that is when the character before the
+ ;; cursor exists and is neither a space nor a newline.
+
+ (key-x
+  (cond
+   ((= @-1 ?්) (delete @-1) (insert "ං"))
+   ((& (> @-1 0) (! (= @-1 0x20)) (! (= @-1 0x0A))) (insert "ං"))
+   (1 (insert "අං"))))
+
+ (key-X
+  (cond
+   ((= @-1 ?්) (delete @-1) (insert "ඃ"))
+   ((& (> @-1 0) (! (= @-1 0x20)) (! (= @-1 0x0A))) (insert "ඃ"))
+   (1 (insert "අඃ")))))
+
+(map
+
+ ;; Every printable ASCII key, U+0021 to U+007E.  Keys config.json maps run
+ ;; their macro; the others insert themselves into the word, as the web
+ ;; converter types them.
+ (keys
+  ("!" "!")
+  ("\"" "\"")
+  ("#" "#")
+  ("$" "$")
+  ("%" "%")
+  ("&" "&")
+  ("'" "'")
+  ("(" "(")
+  (")" ")")
+  ("*" "*")
+  ("+" "+")
+  ("," ",")
+  ("-" "-")
+  ("." ".")
+  ("/" "/")
+  ("0" "0")
+  ("1" "1")
+  ("2" "2")
+  ("3" "3")
+  ("4" "4")
+  ("5" "5")
+  ("6" "6")
+  ("7" "7")
+  ("8" "8")
+  ("9" "9")
+  (":" ":")
+  (";" ";")
+  ("<" "<")
+  ("=" "=")
+  (">" ">")
+  ("?" "?")
+  ("@" "@")
+  ("A" (key-A))
+  ("B" (key-B))
+  ("C" "C")
+  ("D" (key-D))
+  ("E" "E")
+  ("F" "F")
+  ("G" (key-G))
+  ("H" "H")
+  ("I" (key-I))
+  ("J" (key-J))
+  ("K" (key-K))
+  ("L" (key-L))
+  ("M" "M")
+  ("N" (key-N))
+  ("O" "O")
+  ("P" (key-P))
+  ("Q" "Q")
+  ("R" "R")
+  ("S" "S")
+  ("T" (key-T))
+  ("U" (key-U))
+  ("V" "V")
+  ("W" "W")
+  ("X" (key-X))
+  ("Y" (key-Y))
+  ("Z" "Z")
+  ("[" "[")
+  ("\\" "\\")
+  ("]" "]")
+  ("^" "^")
+  ("_" "_")
+  ("`" "`")
+  ("a" (key-a))
+  ("b" (key-b))
+  ("c" "c")
+  ("d" (key-d))
+  ("e" (key-e))
+  ("f" (key-f))
+  ("g" (key-g))
+  ("h" (key-h))
+  ("i" (key-i))
+  ("j" (key-j))
+  ("k" (key-k))
+  ("l" (key-l))
+  ("m" (key-m))
+  ("n" (key-n))
+  ("o" (key-o))
+  ("p" (key-p))
+  ("q" "q")
+  ("r" (key-r))
+  ("s" (key-s))
+  ("t" (key-t))
+  ("u" (key-u))
+  ("v" (key-v))
+  ("w" (key-w))
+  ("x" (key-x))
+  ("y" (key-y))
+  ("z" "z")
+  ("{" "{")
+  ("|" "|")
+  ("}" "}")
+  ("~" "~"))
+
+ ;; BackSpace deletes the last character of the word.  With nothing left
+ ;; in the preedit it is passed on, so the application deletes a character
+ ;; it already has.
+ (backspace
+  ((BackSpace)
+   (cond
+    ((< @< 0) (unhandle))
+    (1 (delete @-1))))))
+
+(state
+
+ ;; Waiting for the first key of a word.
+ (init
+  (keys (shift word)))
+
+ ;; Inside a word.  A key not bound here commits the word and returns to
+ ;; init, which passes the key on.
+ (word
+  (keys)
+  (backspace)))
