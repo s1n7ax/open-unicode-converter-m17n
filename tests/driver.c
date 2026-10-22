@@ -85,21 +85,6 @@ static void require_sane_input_method(void) {
     die("si-ouc not found; HOME must contain .m17n.d/si-ouc.mim");
 }
 
-/** Writes TEXT to stdout as UTF-8. */
-static void print_mtext(MText *text) {
-  int size = mtext_len(text) * 4 + 1;
-  unsigned char *buf = malloc(size);
-  int n;
-
-  if (!buf)
-    die("out of memory");
-  n = mconv_encode_buffer(Mcoding_utf_8, text, buf, size);
-  if (n < 0)
-    die("cannot encode output as UTF-8");
-  fwrite(buf, 1, n, stdout);
-  free(buf);
-}
-
 /** Sends KEY to the input context and applies the result to the app. */
 static void press(MInputContext *ic, const char *key) {
   MSymbol symbol = msymbol(key);
@@ -150,7 +135,8 @@ static void type_line(MInputMethod *im, const char *line) {
   }
   if (ic->preedit)
     mtext_cat(app, ic->preedit);
-  print_mtext(app);
+  if (mconv_encode_stream(Mcoding_utf_8, app, stdout) < 0)
+    die("cannot encode output as UTF-8");
   putchar('\n');
   m17n_object_unref(app);
   minput_destroy_ic(ic);
