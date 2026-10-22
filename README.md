@@ -106,7 +106,7 @@ Every other printable key (`c`, `C`, `S`, `q`, `z`, digits, punctuation, …) ty
 
 ## Known differences
 
-- On the web, a space typed at the very start of the document counts as part of the first word, because the web editor never looks at the first character when it searches for the start of a word. So at the start of a document ` x` gives ` ං` on the web and ` අං` here. Everywhere else a space ends the word on both.
+- On the web, a space or newline typed at the very start of the document counts as part of the first word, because the web editor never looks at the first character when it searches for the start of a word. So at the start of a document ` x` gives ` ං` on the web and ` අං` here, and Return then `x` gives a newline then ං on the web and a newline then අං here. Everywhere else a space or newline ends the word on both.
 - Rules that need text from before a word you already committed (for example after Space and then Backspace) read it from the application. Applications without surrounding-text support, such as many terminals, cannot provide it, so there the next key starts a new word: `ka`, Space, Backspace, `x` gives කං on the web and in applications with surrounding text, and කඅං in applications without it.
 
 ## Tests
