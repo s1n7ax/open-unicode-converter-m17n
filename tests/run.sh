@@ -43,6 +43,9 @@ failed=0
 shown=0
 
 # compare SUITE MODE KEYS EXPECTED ACTUAL [skip-backspace-after-space]
+#
+# Compares EXPECTED and ACTUAL line by line as strings: awk compares
+# number-like fields as numbers, so `1.` and `1` would otherwise be equal.
 compare() {
   local suite=$1 mode=$2 keys=$3 expected=$4 actual=$5 skip=${6:-}
   local result compared excluded mismatches
@@ -64,7 +67,7 @@ compare() {
     {
       if (skip && backspace_after_space($1)) { excluded++; next }
       compared++
-      if ($2 != $3) {
+      if (($2 "") != ($3 "")) {
         mismatches++
         if (shown < 20) {
           shown++
